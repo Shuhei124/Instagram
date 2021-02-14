@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import SVProgressHUD
 
 class LoginViewController: UIViewController {
 
@@ -14,21 +15,27 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var displayNameTextField: UITextField!
     
+    // ログインボタンをタップしたときに呼ばれるメソッド
     @IBAction func handleLoginButton(_ sender: Any) {
         if let address = mailAddressTextField.text, let password = passwordTextField.text {
 
             // アドレスとパスワード名のいずれかでも入力されていない時は何もしない
+            //★if letしているのにこの処理が必要なのはなぜか。empty=nilではない?
             if address.isEmpty || password.isEmpty {
                 return
             }
-
+            // HUDで処理中を表示.処理中を表したい時に使う。
+            SVProgressHUD.show()
+            
             Auth.auth().signIn(withEmail: address, password: password) { authResult, error in
                 if let error = error {
                     print("DEBUG_PRINT: " + error.localizedDescription)
+                    SVProgressHUD.showError(withStatus: "サインインに失敗しました。")
                     return
                 }
                 print("DEBUG_PRINT: ログインに成功しました。")
-
+                // HUDの表示を終了。 show() メソッドとセットで使う。
+                SVProgressHUD.dismiss()
                 // 画面を閉じてタブ画面に戻る
                 self.dismiss(animated: true, completion: nil)
             }
@@ -43,8 +50,9 @@ class LoginViewController: UIViewController {
                        print("DEBUG_PRINT: 何かが空文字です。")
                        return
                    }
-
-                   // アドレスとパスワードでユーザー作成。ユーザー作成に成功すると、自動的にログインする
+                    // HUDで処理中を表示
+                    SVProgressHUD.show()
+                    // アドレスとパスワードでユーザー作成。ユーザー作成に成功すると、自動的にログインする
                    Auth.auth().createUser(withEmail: address, password: password) { authResult, error in
                        if let error = error {
                            // エラーがあったら原因をprintして、returnすることで以降の処理を実行せずに処理を終了する
@@ -52,8 +60,6 @@ class LoginViewController: UIViewController {
                            return
                        }
                        print("DEB   UG_PRINT: ユーザー作成に成功しました。")
-                    //★アカウントの作成に成功すると、自動的にログインされるが、どこで判定するDBにアクセスしているか?
-                    
                     
                        // 表示名を設定する
                        let user = Auth.auth().currentUser
@@ -67,7 +73,8 @@ class LoginViewController: UIViewController {
                                    return
                                }
                                print("DEBUG_PRINT: [displayName = \(user.displayName!)]の設定に成功しました。")
-
+                            // HUDを消す
+                            SVProgressHUD.dismiss()
                                // 画面を閉じてタブ画面に戻る
                                self.dismiss(animated: true, completion: nil)
                            }

@@ -5,19 +5,24 @@
 //  Created by 豊田修平 on 2021/01/18.
 //
 
+//★ViewControllerを削除しているが、TabBarControllerを使うときはいつも削除するものか?共存もありえる?
+
 import UIKit
 import Firebase
+
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        //★ viewDidAppearは画面を表示するときに毎回実行される
 
         // currentUserがnilならログインしていない
         if Auth.auth().currentUser == nil {
-            // ログインしていないときの処理
+            // ログインしていないときの処理(LoginをIDに設定しているLoginViewControllerに飛ばす)
             let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "Login")
             self.present(loginViewController!, animated: true, completion: nil)
+            //★animated: true, completion: nilとはどういう事か。
         }
     }
     
@@ -37,9 +42,13 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             // ImageSelectViewControllerは、タブ切り替えではなくモーダル画面遷移する
             let imageSelectViewController = storyboard!.instantiateViewController(withIdentifier: "ImageSelect")
             present(imageSelectViewController, animated: true)
+            
+            //falseの場合は画面遷移しない。
             return false
+            
         } else {
             // その他のViewControllerは通常のタブ切り替えを実施
+            //tureの場合はタブ切り替えを実施
             return true
         }
     }
