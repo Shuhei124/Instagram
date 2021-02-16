@@ -50,8 +50,8 @@ class LoginViewController: UIViewController {
                        print("DEBUG_PRINT: 何かが空文字です。")
                        return
                    }
-                    // HUDで処理中を表示
-                    SVProgressHUD.show()
+                // HUDで処理中を表示
+                SVProgressHUD.show()
                     // アドレスとパスワードでユーザー作成。ユーザー作成に成功すると、自動的にログインする
                    Auth.auth().createUser(withEmail: address, password: password) { authResult, error in
                        if let error = error {

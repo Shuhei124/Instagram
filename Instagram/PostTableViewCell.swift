@@ -16,20 +16,32 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var likeLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
+    @IBOutlet weak var commentIn: UITextField!
     
+    @IBOutlet weak var commentBox: UILabel!
+
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(dismissKeyboard))
+        self.addGestureRecognizer(tapGesture)
+        
+        
         // Initialization code
     }
-
+    @objc func dismissKeyboard(){
+         // キーボードを閉じる
+         endEditing(true)
+     }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    
+    @IBAction func commentPush(_ sender: Any) {
+        
+    }
     // PostDataの内容をセルに表示。このファンクションはPostTableViewCellで呼び出される。
     func setPostData(_ postData: PostData) {
         // 画像の表示
@@ -53,6 +65,7 @@ class PostTableViewCell: UITableViewCell {
         let likeNumber = postData.likes.count
         likeLabel.text = "\(likeNumber)"
 
+        
         // いいねボタンの表示
         if postData.isLiked {
             let buttonImage = UIImage(named: "like_exist")
