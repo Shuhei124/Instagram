@@ -140,17 +140,18 @@ class HomeViewController: UIViewController, UITableViewDataSource,UITableViewDel
             if let myid = Auth.auth().currentUser?.uid {
             // 更新データを作成する
             var updateValue: FieldValue
-            var updateName: FieldValue
-
-            updateValue = FieldValue.arrayUnion([cell.commentBox.text])
-            let user = Auth.auth().currentUser
-            updateName = FieldValue.arrayUnion([user?.displayName])
-            // コメントと投稿者をを書き込む
-            let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
-                postRef.updateData(["comment": updateValue])
-                postRef.updateData(["commentName": updateName])
             
-            print(cell.commentBox.text)
+            let user = Auth.auth().currentUser
+            if let displayName = user?.displayName, let comment = cell.commentBox.text {
+                    var commentName = "\(displayName): \(comment)"
+                    updateValue = FieldValue.arrayUnion([commentName])
+                // コメントと投稿者をを書き込む
+                let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
+                    postRef.updateData(["comments": updateValue])
+                }
+
+            
+      
         }
     }
 }

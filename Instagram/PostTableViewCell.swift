@@ -83,17 +83,14 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         }
         
         commentList.numberOfLines = 0
-        var commentListName = ""
-        let commentALL = postData.comment
-        let commentNameALL = postData.commentName
-        for (comment_i,commentName_i) in zip(commentALL,commentNameALL){
-            commentListName += comment_i
-            commentListName.append(":")
-            commentListName += commentName_i
-            commentListName.append("\n")
+        var commentString = ""
+        let commentALL = postData.comments
+
+        for comment_i in commentALL{
+            commentString += comment_i + "\n"
             
         }
-        commentList.text = commentListName
+        commentList.text = commentString
         
         /*
         //allCommentは最初は空である
