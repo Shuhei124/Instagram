@@ -145,7 +145,7 @@ class HomeViewController: UIViewController, UITableViewDataSource,UITableViewDel
             updateValue = FieldValue.arrayUnion([cell.commentBox.text])
             let user = Auth.auth().currentUser
             updateName = FieldValue.arrayUnion([user?.displayName])
-            // コメントと投稿者をを書き込む★
+            // コメントと投稿者をを書き込む
             let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
                 postRef.updateData(["comment": updateValue])
                 postRef.updateData(["commentName": updateName])
