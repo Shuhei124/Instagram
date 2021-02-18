@@ -14,7 +14,7 @@ class HomeViewController: UIViewController, UITableViewDataSource,UITableViewDel
     
     // 投稿データを格納する配列
         var postArray: [PostData] = []
-
+        
         // Firestoreのリスナー(Firestoreのデータ更新の監視を行う)
         var listener: ListenerRegistration!
 
@@ -82,10 +82,13 @@ class HomeViewController: UIViewController, UITableViewDataSource,UITableViewDel
             let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PostTableViewCell
             cell.setPostData(postArray[indexPath.row])
             //setPostDataはPostTableViewCellで定義される
-            
+         
             // セル内のボタンのアクションをソースコードで設定する
             //addTarget(_:action:for:)メソッドが、青い線を引っ張ってActionを設定する代わり
-                  cell.likeButton.addTarget(self, action:#selector(handleButton(_:forEvent:)), for: .touchUpInside)
+            cell.likeButton.addTarget(self, action:#selector(handleButton(_:forEvent:)), for: .touchUpInside)
+            
+            //コメントボタンが押された時
+            cell.commentButton.addTarget(self, action:#selector(cmhandleButton(_:forEvent:)), for: .touchUpInside)
             
             
             return cell
@@ -120,4 +123,34 @@ class HomeViewController: UIViewController, UITableViewDataSource,UITableViewDel
             }
         }
 
+    // セル内のボタンがタップされた時に呼ばれるメソッド
+    @objc func cmhandleButton(_ sender: UIButton, forEvent event: UIEvent){
+            print("DEBUG_PRINT: commentボタンがタップされました。")
+
+            // タップされたセルのインデックスを求める
+            let touch = event.allTouches?.first
+            let point = touch!.location(in: self.tableView)
+            let indexPath = tableView.indexPathForRow(at: point)
+
+            // 配列からタップされたインデックスのデータを取り出す
+            let postData = postArray[indexPath!.row]
+            let cell = tableView.cellForRow(at:indexPath!)as! PostTableViewCell
+            
+        
+            if let myid = Auth.auth().currentUser?.uid {
+            // 更新データを作成する
+            var updateValue: FieldValue
+            var updateName: FieldValue
+
+            updateValue = FieldValue.arrayUnion([cell.commentBox.text])
+            let user = Auth.auth().currentUser
+            updateName = FieldValue.arrayUnion([user?.displayName])
+            // コメントと投稿者をを書き込む★
+            let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
+                postRef.updateData(["comment": updateValue])
+                postRef.updateData(["commentName": updateName])
+            
+            print(cell.commentBox.text)
+        }
+    }
 }

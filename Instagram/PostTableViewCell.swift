@@ -9,39 +9,46 @@ import UIKit
 import FirebaseUI
 
 
-class PostTableViewCell: UITableViewCell {
+class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
 
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var likeLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
-    @IBOutlet weak var commentIn: UITextField!
     
-    @IBOutlet weak var commentBox: UILabel!
+    @IBOutlet weak var commentButton: UIButton!
+    @IBOutlet weak var commentBox: UITextField!
+    @IBOutlet weak var commentList: UILabel!
+    
 
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(dismissKeyboard))
+        self.commentBox.delegate = self
+      let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(dismissKeyboard))
         self.addGestureRecognizer(tapGesture)
         
-        
+        //testfieldshouldreturn
         // Initialization code
     }
     @objc func dismissKeyboard(){
          // キーボードを閉じる
          endEditing(true)
      }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        commentBox.resignFirstResponder()
+        return true
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    @IBAction func commentPush(_ sender: Any) {
-        
-    }
     // PostDataの内容をセルに表示。このファンクションはPostTableViewCellで呼び出される。
     func setPostData(_ postData: PostData) {
         // 画像の表示
@@ -74,5 +81,31 @@ class PostTableViewCell: UITableViewCell {
             let buttonImage = UIImage(named: "like_none")
             self.likeButton.setImage(buttonImage, for: .normal)
         }
-    }
-}
+        
+        commentList.numberOfLines = 0
+        var commentListName = ""
+        let commentALL = postData.comment
+        let commentNameALL = postData.commentName
+        for (comment_i,commentName_i) in zip(commentALL,commentNameALL){
+            commentListName += comment_i
+            commentListName.append(":")
+            commentListName += commentName_i
+            commentListName.append("\n")
+            
+        }
+        commentList.text = commentListName
+        
+        /*
+        //allCommentは最初は空である
+        var allComment = ""
+        //postData.commentsの中から要素をひとつずつ取り出すのを繰り返す、というのがcomment
+        for comment in postData.comment{
+        //comment + comment = allCommentである
+        allComment += comment
+        print(comment)
+        print("a")
+        //commentLabelに表示するのはallComment（commentを足していったもの）である
+        self.commentList.text = allComment
+        }*/
+
+    }}
